@@ -1,0 +1,28 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript">
+// setup some JSON to use
+var cars = [
+	{ "make":"Porsche", "model":"911S" },
+	{ "make":"Mercedes-Benz", "model":"220SE" },
+	{ "make":"Jaguar","model": "Mark VII" }
+];
+
+window.onload = function() {
+	// setup the button click
+	document.getElementById("theButton").onclick = function() {
+		doWork()++65
+	};
+}
+
+function doWork() {
+	// ajax the JSON to the server
+	axios.post("/receiver", cars)
+		.then(function(response) {
+			// reponse back from server
+			alert(response.data);
+		});
+}
+</script>
+This will send data using AJAX to Python:<br /><br />
+<a href="#" id="theButton">Click Me</a>
