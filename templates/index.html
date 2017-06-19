@@ -1,28 +1,109 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script type="text/javascript">
-// setup some JSON to use
-var cars = [
-	{ "make":"Porsche", "model":"911S" },
-	{ "make":"Mercedes-Benz", "model":"220SE" },
-	{ "make":"Jaguar","model": "Mark VII" }
-];
+<html>
+<head>
+  <title>Clientjs Test</title>
+  <script src="static/client.min.js"></script>
+</head>
 
-window.onload = function() {
-	// setup the button click
-	document.getElementById("theButton").onclick = function() {
-		doWork()++65
-	};
-}
+<body>
+    <center>
+    <H1>Testing Clientjs and JSON</h1>
 
-function doWork() {
-	// ajax the JSON to the server
-	axios.post("/receiver", cars)
-		.then(function(response) {
-			// reponse back from server
-			alert(response.data);
-		});
-}
-</script>
-This will send data using AJAX to Python:<br /><br />
-<a href="#" id="theButton">Click Me</a>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	
+	<script type="text/javascript">
+		// setup some JSON to use
+		// no idea why I have to set this up as an array of key value pairs. 
+		// when I try without the [] it fails in the python script
+		var thisuser_json = [ {
+				"username" 		: "undefined",
+				"fingerprint" 	: "undefined",
+				"mydevice" 		: "undefined",
+				"mydevicetype" 	: "undefined",
+				"mydevicevendor": "undefined",
+				"opsys"			: "undefined",
+				"opsysversion"	: "undefined",
+				"browser" 		: "undefined",
+				"browserversion": "undefined",
+			}, ];
+		
+		//
+		// Grab the client fingerprint
+		//
+		var client = new ClientJS(); // Create A New Client Object
+		
+		document.write( "my unique finger print is = ", client.getFingerprint(),"<br>" );
+		
+		//
+		// Grab the device information
+		//
+
+		if (client.getDevice())			thisuser_json[0]["mydevice"] 		= client.getDevice();
+		if (client.getDeviceType()) 	thisuser_json[0]["mydevicetype"] 	= client.getDeviceType();
+		if (client.getDeviceVendor())	thisuser_json[0]["mydevicevendor"] 	= client.getDeviceVendor();
+		if (client.isJava())			thisuser_json[0]["mydevicetype"] 	= "Java " + client.getJavaVersion(); 
+		if (client.getBrowser()) 		thisuser_json[0]["browser"] 		= client.getBrowser();
+		if (client.getBrowserVersion()) thisuser_json[0]["browserversion"] 	= client.getBrowserVersion();
+		if (client.getFingerprint()) 	thisuser_json[0]["fingerprint"] 	= client.getFingerprint().toString();
+		if (client.getOS())				thisuser_json[0]["opsys"] 			= client.getOS();
+// The getOSVersion call hangs - so I'm leaving it out for now
+//		if (client.getOSVersion()) 		thisuser_json[0]["opsysversion"] 	= client.getOSversion();
+
+
+		if (client.isMobile())
+		{
+			if (client.isMobileAndroid())
+			{
+				thisuser_json[0]["mydevicetype"] = "Android";
+			} 
+			else
+			if (client.isMobileIOS())
+			{
+				thisuser_json[0]["mydevicetype"] = "IOS";
+			}
+			else
+			{
+				thisuser_json[0]["mydevicetype"] = "Unknown Mobile Device";
+			}
+		}
+		else
+		{
+			if (client.isJava())
+			{ 
+				thisuser_json[0]["mydevicetype"] = "Java " + client.getJavaVersion(); // Get Java Version
+			}
+			else
+			{
+				thisuser_json[0]["mydevicetype"] = "No Java Installed...";
+			}
+		}
+
+
+
+		//
+		// Form to grab username (register page only)
+		//
+		thisuser_json[0]["username"] = "Phil Davidson";
+
+		window.onload = function()
+		{
+			// setup the button click
+			document.getElementById("theButton").onclick = function() {
+				doWork();
+			};
+		}
+
+		function doWork()
+		{
+			// ajax the JSON to the server
+			axios.post("/receiver", thisuser_json)
+				.then(function(response) {
+					// reponse back from server
+					// alert("response.data");
+					document.write("All Done!!!")
+				});
+		}
+	</script>
+
+	This will send user data using AJAX to Python:<br /><br />
+	<a href="#" id="theButton">Click Me</a>
