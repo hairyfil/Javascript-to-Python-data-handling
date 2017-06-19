@@ -8,11 +8,22 @@
     <center>
     <H1>Testing Clientjs and JSON</h1>
 
+	<script>
+		
+		
+
+	</script>
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	
 	<script type="text/javascript">
-		// setup some JSON to use
+
+		// The next 2 lines are used for geo-location stuff
+		var os = "";
+		var ua = navigator.userAgent;
+		
+		// setup some JSON to use for capturing data to pass back to python
 		// no idea why I have to set this up as an array of key value pairs. 
 		// when I try without the [] it fails in the python script
 		var thisuser_json = [ {
@@ -25,6 +36,8 @@
 				"opsysversion"	: "undefined",
 				"browser" 		: "undefined",
 				"browserversion": "undefined",
+				"mylongitude"	: "0",
+				"mylatitude"	: "0",
 			}, ];
 		
 		//
@@ -46,8 +59,8 @@
 		if (client.getBrowserVersion()) thisuser_json[0]["browserversion"] 	= client.getBrowserVersion();
 		if (client.getFingerprint()) 	thisuser_json[0]["fingerprint"] 	= client.getFingerprint().toString();
 		if (client.getOS())				thisuser_json[0]["opsys"] 			= client.getOS();
-// The getOSVersion call hangs - so I'm leaving it out for now
-//		if (client.getOSVersion()) 		thisuser_json[0]["opsysversion"] 	= client.getOSversion();
+		// The getOSVersion call hangs - so I'm leaving it out for now
+		//	if (client.getOSVersion()) 		thisuser_json[0]["opsysversion"] 	= client.getOSversion();
 
 
 		if (client.isMobile())
@@ -84,6 +97,62 @@
 		// Form to grab username (register page only)
 		//
 		thisuser_json[0]["username"] = "Phil Davidson";
+
+
+		document.write("Done the useragent assignment<br>");
+		document.write("UserAgent contains [ ", ua, " ]<br><br>");
+
+		// I'm not actually doing anything with this defintion of os (yet)
+		if ((ua.match(/iPad/i)) || (ua.match(/iPhone/i)) || (ua.match(/iPod/i)))
+		{
+    		os = "iOS";
+    	} 
+		else
+		if (ua.match(/Android/i))
+		{
+        	os = "Android";
+    	}
+		else
+		if (ua.match(/Windows/i))
+		{
+        	os = "Windows";   
+    	}
+		else
+		if ((ua.match(/Blackberry/i)) || (ua.match(/BB/i)) || (ua.match(/RIM/)))
+		{
+        	os = "Blackberry";
+      	}
+		else
+		{
+          os = "Unknown";
+    	}
+	
+		document.write("<br>The Operating System has been identified as being - ", os, "<br><br>");
+
+		// https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/Using_geolocation
+		// https://stackoverflow.com/questions/2577305/get-gps-location-from-the-web-browser3
+		
+		if ("geolocation" in navigator)
+		{
+			/* geolocation is available */
+			document.write("Geolocation supported - finding you on the map<br>");
+			navigator.geolocation.getCurrentPosition(myposition)
+		}
+		else
+		{
+  			/* geolocation IS NOT available */
+			document.write("Sorry geolocation is not supported by your browser<br>"); 
+		}
+
+		function myposition(location)
+		{
+			thisuser_json[0]["mylongitude"]	= location.coords.latitude;
+			thisuser_json[0]["mylatitude"]	= location.coords.longitude;
+
+			// document.write("< ", location.coords.latitude, " >");
+			// document.write("< ", location.coords.longitude, " >");
+			// document.write("< ", location.coords.accuracy, " >");
+		}
 
 		window.onload = function()
 		{

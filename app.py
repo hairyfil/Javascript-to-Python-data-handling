@@ -21,8 +21,6 @@ def worker():
 	if data == None:
 		print "********** data = none ouch ************ "
 
-	print data
-
 	for item in data:
 		# loop over every row
 		username 		= item['username']
@@ -34,6 +32,8 @@ def worker():
 		browserversion 	= item['browserversion']
 		opsys 			= item['opsys']
 		opsysversion 	= item['opsysversion']
+		mylongitude		= item['mylongitude']
+		mylatitude		= item['mylatitude']
 
 
 	print
@@ -45,6 +45,7 @@ def worker():
 	print "Device Vendor = " + mydevicevendor
 	print "Operating System = " + opsys + "   [Verion: " + opsysversion + "]"
 	print "Browser = " + browser + "   [Version: " + browserversion + "]"
+	print "Longitude <" + str(mylongitude) + "> Latitude <" + str(mylatitude) + ">"
 	print "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"
 	print
 
